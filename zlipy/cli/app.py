@@ -1,4 +1,9 @@
+import asyncio
+
 import click
+
+from zlipy import config
+from zlipy.api_client import websocket_client
 
 
 @click.group()
@@ -13,7 +18,7 @@ def init():
 
 @main.command()
 def chat():
-    print("Chat called")
+    asyncio.run(websocket_client(config.get_websocket_endpoint()))
 
 
 cli = click.CommandCollection(sources=[main])
