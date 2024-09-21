@@ -13,6 +13,7 @@ def main():
 
 @main.command()
 def chat():
+    """Start a chat."""
     asyncio.run(websocket_client(config.get_websocket_endpoint()))
 
 
