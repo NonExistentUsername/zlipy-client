@@ -12,11 +12,6 @@ def main():
 
 
 @main.command()
-def init():
-    print("Init called")
-
-
-@main.command()
 def chat():
     asyncio.run(websocket_client(config.get_websocket_endpoint()))
 
