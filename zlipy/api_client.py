@@ -2,42 +2,8 @@ import asyncio
 
 import websockets
 
-from zlipy.services.api import APIClientFactory, IAPIClient
-
-
-async def websocket_client(client: IAPIClient):
-    async with client.connect() as websocket:
-        while websocket.open:
-            try:
-                # Read until ready event is received
-                while True:
-                    response = await asyncio.wait_for(websocket.recv(), 300)
-                    print(f"< Received: {response}")  # type: ignore
-                    if "ReadyEvent" in response:
-                        break
-
-                    if "WaitingForConfigurationEvent" in response:
-                        await websocket.send(
-                            '{"event": "ConfigurationEvent", "tools": ["search"]}'
-                        )
-
-                    if "ToolCallEvent" in response:
-                        await websocket.send(
-                            '{"event": "ToolResponseEvent", "response": "Project folder is empty"}'
-                        )
-
-                # Send a message to the server
-                message = input("Enter a message: ")
-                if not message:
-                    await websocket.close()
-                    break
-
-                await websocket.send(message)
-                print(f"> Sent: {message}")
-
-            except Exception as e:
-                print(f"An error occurred: {e}")
+from zlipy.services.client import ClientFactory
 
 
 def run():
-    asyncio.run(websocket_client(APIClientFactory.create()))
+    asyncio.run(ClientFactory.create().run())
