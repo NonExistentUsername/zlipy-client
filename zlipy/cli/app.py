@@ -2,8 +2,8 @@ import asyncio
 
 import click
 
-from zlipy import config
 from zlipy.api_client import websocket_client
+from zlipy.config import init_config
 
 
 @click.group()
@@ -12,9 +12,16 @@ def main():
 
 
 @main.command()
+def init():
+    """Initialize the configuration."""
+    init_config()
+    click.echo("Configuration initialized.")
+
+
+@main.command()
 def chat():
     """Start a chat."""
-    asyncio.run(websocket_client(config.get_websocket_endpoint()))
+    asyncio.run(websocket_client("ws://localhost:8000/ws/"))
 
 
 cli = click.CommandCollection(sources=[main])
