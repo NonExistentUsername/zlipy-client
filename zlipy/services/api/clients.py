@@ -18,7 +18,7 @@ class APIClient(IAPIClient):
             response = await client.post(endpoint, json={"texts": texts})
             response.raise_for_status()
 
-            return response.json()["embeddings"]
+            return response.json()
 
     def connect(self):
         endpoint = f"{self.ws_base}/ws/"

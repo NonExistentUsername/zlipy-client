@@ -4,25 +4,58 @@ import json
 import websockets
 
 from zlipy.domain.events import EventFactory, IEvent
+from zlipy.domain.tools import ITool
 from zlipy.services.api import IAPIClient
 from zlipy.services.client.interfaces import IClient
 
 
 class Client(IClient):
-    def __init__(self, api_client: IAPIClient) -> None:
+    def __init__(
+        self, api_client: IAPIClient, tools: dict[str, ITool] | None = None
+    ) -> None:
         super().__init__()
         self.api_client = api_client
+        self.tools: dict[str, ITool] = tools or {}
+
+    async def _call_tool(self, tool_name: str, query: str) -> str:
+        tool = self.tools.get(tool_name)
+
+        return f"Tool {tool_name} not found" if tool is None else await tool.run(query)
+
+    def _pretty_print_message(self, message: str):
+        print(f"Message: {message}")
+
+    async def _send_event(
+        self, websocket: websockets.WebSocketClientProtocol, event: IEvent
+    ):
+        await websocket.send(json.dumps({"event": event.name, **event.data}))
 
     async def _handle_event(
         self, websocket: websockets.WebSocketClientProtocol, event: IEvent
     ):
         if event.name == "ToolCallEvent":
-            await websocket.send(
-                '{"event": "ToolResponseEvent", "response": "Project folder is empty"}'
+            await self._send_event(
+                websocket,
+                EventFactory.create(
+                    {
+                        "event": "ToolResponseEvent",
+                        "response": await self._call_tool(
+                            event.data["tool"], event.data["query"]
+                        ),
+                    }
+                ),
             )
 
         if event.name == "WaitingForConfigurationEvent":
-            await websocket.send('{"event": "ConfigurationEvent", "tools": ["search"]}')
+            await self._send_event(
+                websocket,
+                EventFactory.create(
+                    {"event": "ConfigurationEvent", "tools": list(self.tools.keys())}
+                ),
+            )
+
+        if event.name == "AgentMessageEvent":
+            self._pretty_print_message(event.data["message"])
 
     def _stop_handle_events_condition(self, event: IEvent) -> bool:
         return event.name == "ReadyEvent"
