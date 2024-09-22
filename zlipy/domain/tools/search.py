@@ -39,7 +39,7 @@ def get_db_retriever():
 
 
 class CodeBaseSearch(ITool):
-    def __init__(self, code_base):
+    def __init__(self):
         self.db, self.retriever = get_db_retriever()
 
     async def run(self, input: str) -> str:
