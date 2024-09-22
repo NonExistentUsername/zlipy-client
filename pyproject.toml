@@ -10,6 +10,8 @@ python = "^3.11"
 websockets = "^13.1"
 click = "^8.1.7"
 deeplake = "^3.9.23"
+gitignore-parser = "^0.1.11"
+langchain-community = "^0.3.0"
 
 
 [tool.poetry.group.dev.dependencies]
