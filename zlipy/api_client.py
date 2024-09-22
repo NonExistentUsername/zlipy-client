@@ -2,15 +2,17 @@ import asyncio
 
 import websockets
 
+from zlipy.services.api import APIClientFactory, IAPIClient
 
-async def websocket_client(uri):
-    async with websockets.connect(uri, ping_timeout=60, ping_interval=10) as websocket:
+
+async def websocket_client(client: IAPIClient):
+    async with client.connect() as websocket:
         while websocket.open:
             try:
                 # Read until ready event is received
                 while True:
                     response = await asyncio.wait_for(websocket.recv(), 300)
-                    print(f"< Received: {response}")
+                    print(f"< Received: {response}")  # type: ignore
                     if "ReadyEvent" in response:
                         break
 
@@ -37,6 +39,5 @@ async def websocket_client(uri):
                 print(f"An error occurred: {e}")
 
 
-if __name__ == "__main__":
-    uri = "ws://localhost:8000/ws/"  # The WebSocket endpoint
-    asyncio.run(websocket_client(uri))
+def run():
+    asyncio.run(websocket_client(APIClientFactory.create()))
