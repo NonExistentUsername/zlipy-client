@@ -42,5 +42,7 @@ class CodeBaseSearch(ITool):
     def __init__(self):
         self.db, self.retriever = get_db_retriever()
 
-    async def run(self, input: str) -> str:
-        return str(self.retriever.invoke(input))
+    async def run(self, input: str) -> list[str]:
+        docs = self.retriever.invoke(input)
+
+        return [doc.page_content for doc in docs]

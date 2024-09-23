@@ -17,7 +17,7 @@ class Client(IClient):
         self.api_client = api_client
         self.tools: dict[str, ITool] = tools or {}
 
-    async def _call_tool(self, tool_name: str, query: str) -> str:
+    async def _call_tool(self, tool_name: str, query: str):
         tool = self.tools.get(tool_name)
 
         return f"Tool {tool_name} not found" if tool is None else await tool.run(query)
@@ -38,8 +38,8 @@ class Client(IClient):
                 websocket,
                 EventFactory.create(
                     {
-                        "event": "ToolResponseEvent",
-                        "response": await self._call_tool(
+                        "event": "SearchToolCallResponseEvent",
+                        "documents": await self._call_tool(
                             event.data["tool"], event.data["query"]
                         ),
                     }
