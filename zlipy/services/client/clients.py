@@ -75,6 +75,7 @@ class Client(IClient):
             event = EventFactory.create(response)
 
             if self._stop_handle_events_condition(event):
+                print("< Ready event received")
                 break
 
             await self._handle_event(websocket, event)
@@ -87,7 +88,7 @@ class Client(IClient):
                     await self._handle_events(websocket)
 
                     # Send a message to the server
-                    message = aioconsole.ainput("Enter a message: ")
+                    message = await aioconsole.ainput("Enter a message: ")
                     if not message:
                         await websocket.close()
                         break
@@ -96,4 +97,7 @@ class Client(IClient):
                     print(f"> Sent: {message}")
 
                 except Exception as e:
+                    import traceback
+
+                    traceback.print_exc()
                     print(f"An error occurred: {e}")
