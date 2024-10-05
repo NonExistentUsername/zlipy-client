@@ -2,7 +2,7 @@ import abc
 
 
 class IConfig(abc.ABC):
-    @abc.abstractmethod
     @property
+    @abc.abstractmethod
     def api_key(self) -> str:
         pass
