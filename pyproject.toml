@@ -4,6 +4,9 @@ version = "0.1.0"
 description = ""
 authors = ["Dmytro Maior <mayor4090Gmail.com>"]
 readme = "README.md"
+packages = [
+    {include = "zlipy", from = "."}
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -12,6 +15,7 @@ click = "^8.1.7"
 deeplake = "^3.9.23"
 gitignore-parser = "^0.1.11"
 langchain-community = "^0.3.0"
+aioconsole = "^0.8.0"
 
 
 [tool.poetry.group.dev.dependencies]

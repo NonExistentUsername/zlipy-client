@@ -11,15 +11,17 @@ class APIClient(IAPIClient):
         self.base = base
         self.ws_base = base.replace("https", "ws").replace("http", "ws")
 
-    async def generate_embeddings(self, texts: list[str]) -> list[list[float]]:
-        endpoint = f"{self.base}/tools/embeddings/"
+    async def generate_embeddings(
+        self, api_key: str, inputs: list[str]
+    ) -> list[list[float]]:
+        endpoint = f"{self.base}/tools/embeddings/?token={api_key}"
 
         async with httpx.AsyncClient() as client:
-            response = await client.post(endpoint, json={"texts": texts})
+            response = await client.post(endpoint, json={"texts": inputs})
             response.raise_for_status()
 
             return response.json()
 
-    def connect(self):
-        endpoint = f"{self.ws_base}/ws/"
+    def connect(self, api_key: str) -> websockets.connect:
+        endpoint = f"{self.ws_base}/ws/?token={api_key}"
         return websockets.connect(endpoint, ping_timeout=60, ping_interval=10)

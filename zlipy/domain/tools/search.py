@@ -5,6 +5,7 @@ from langchain_community.document_loaders import TextLoader
 from langchain_community.vectorstores import DeepLake  # type: ignore
 from langchain_core.embeddings import Embeddings
 
+from zlipy.config.interfaces import IConfig
 from zlipy.domain.filesfilter import FilesFilterFactory, IFilesFilter
 from zlipy.domain.tools.interfaces import ITool
 from zlipy.services.embeddings import APIEmbeddings
@@ -26,9 +27,9 @@ def load_docs() -> list:
     return docs
 
 
-def get_db_retriever():
+def get_db_retriever(config: IConfig):
     texts = load_docs()
-    db = DeepLake.from_documents(texts, APIEmbeddings(), overwrite=True)
+    db = DeepLake.from_documents(texts, APIEmbeddings(config=config), overwrite=True)
 
     retriever = db.as_retriever()
     retriever.search_kwargs["distance_metric"] = "cos"
@@ -39,8 +40,8 @@ def get_db_retriever():
 
 
 class CodeBaseSearch(ITool):
-    def __init__(self):
-        self.db, self.retriever = get_db_retriever()
+    def __init__(self, config: IConfig) -> None:
+        self.db, self.retriever = get_db_retriever(config=config)
 
     async def run(self, input: str) -> list[str]:
         docs = self.retriever.invoke(input)

@@ -164,4 +164,4 @@ cython_debug/
 deeplake/
 .DS_Store
 
-clipy.ini
+zlipy.ini
