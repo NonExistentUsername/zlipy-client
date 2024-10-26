@@ -20,7 +20,7 @@ zlipy --version
 ```
 
 ### Prerequisites
-Ensure you have Python 3.7 or higher installed, as well as any necessary dependencies that might be required by the package.
+Ensure you have Python 3.11 or higher installed, as well as any necessary dependencies that might be required by the package.
 
 ## Getting Started
 
