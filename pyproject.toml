@@ -2,7 +2,7 @@
 name = "zlipy"
 version = "0.1.0"
 description = ""
-authors = ["Dmytro Maior <mayor4090Gmail.com>"]
+authors = ["Dmytro Maior <mayor4090@gmail.com>"]
 readme = "README.md"
 packages = [
     {include = "zlipy", from = "."}
