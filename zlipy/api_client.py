@@ -1,9 +1,15 @@
 import asyncio
 
-import websockets
+import rich
 
-from zlipy.services.client import ClientFactory
+from zlipy.services.client import ClientFactory, IClient
 
 
 def run():
-    asyncio.run(ClientFactory.create().run())
+    try:
+        client = ClientFactory.create()
+    except Exception as e:
+        rich.print(f"[red]Error during client initialization: {e}[/red]")
+        return
+
+    asyncio.run(client.run())

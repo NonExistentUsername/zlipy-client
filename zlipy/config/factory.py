@@ -13,9 +13,13 @@ class ConfigFactory:
         config.read(filename)
 
         if "settings" not in config.sections():
-            raise ValueError("settings section not found in configuration file")
+            raise ValueError(
+                f"[bold red]settings[/] section not found in configuration file. Please, ensure you write it correctly inf your [bold red]{DEFAULT_CONFIG_FILENAME}[/] file"
+            )
 
         if api_key := config["settings"].get("api_key"):
             return DefaultConfig(api_key)
         else:
-            raise ValueError("api_key not found in configuration file")
+            raise ValueError(
+                "[bold red]api_key[/] not found in configuration file. Please, ensure you write it correctly inf your [bold red]{DEFAULT_CONFIG_FILENAME}[/] file"
+            )
