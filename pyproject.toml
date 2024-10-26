@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zlipy"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Dmytro Maior <mayor4090@gmail.com>"]
 readme = "README.md"
