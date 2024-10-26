@@ -44,6 +44,23 @@ zlipy chat
 This command initiates the chat interface. Users can expect to interact with the chat service directly through the command line. Currently, there are no additional flags or options for
 this command, but future updates may introduce more functionality.
 
+## API Key Retrieval
+
+To use the API, you will need an API key. The API key is required to authenticate your requests and ensure secure access to the services provided by our API.
+
+### Steps to Retrieve Your API Key:
+
+1. Visit (https://dev.zlipy.space).
+2. Sign up for an account if you don’t have one.
+3. Log in and navigate to the API keys section.
+4. Generate and retrieve your API key.
+
+### Security Best Practices:
+
+- For best practices, avoid hardcoding your API key in your source code. Instead, consider using environment variables or a secrets management tool to keep your API key
+secure.
+- Do not share your API key publicly or expose it in client-side code.
+
 ## Nuances of Usage
 - **Troubleshooting**: If the chat fails to start, ensure that your configuration file is correctly set up and that you have an active internet connection. Check for error messages that
 may indicate what went wrong.
@@ -56,6 +73,6 @@ A typical use case for `zlipy` might involve a user initializing their configura
 
 ## Additional Resources
 For further assistance, consider the following resources:
-- [GitHub Repository](https://github.com/NonExistentUsername/zlipy-client/zlipy)
-- [Issue Tracker](https://github.com/NonExistentUsername/zlipy-client/zlipy/issues) for reporting bugs
+- [GitHub Repository](https://github.com/NonExistentUsername/zlipy-client/)
+- [Issue Tracker](https://github.com/NonExistentUsername/zlipy-clie/nt/issues) for reporting bugs
 - Links to relevant community forums or chat groups
