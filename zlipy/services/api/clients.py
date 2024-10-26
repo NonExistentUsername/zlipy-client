@@ -9,7 +9,7 @@ class APIClient(IAPIClient):
     def __init__(self, base: str = API_BASE):
         super().__init__()
         self.base = base
-        self.ws_base = base.replace("https", "ws").replace("http", "ws")
+        self.ws_base = base.replace("https", "wss").replace("http", "wss")
 
     async def generate_embeddings(
         self, api_key: str, inputs: list[str]
