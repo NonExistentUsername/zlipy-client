@@ -1,1 +1,4 @@
 DEFAULT_CONFIG_FILENAME = "zlipy.ini"
+DEFAULT_CONFIG_TEMPLATE = """[settings]
+api_key=YOUR_API_KEY
+"""
