@@ -56,6 +56,6 @@ A typical use case for `zlipy` might involve a user initializing their configura
 
 ## Additional Resources
 For further assistance, consider the following resources:
-- [GitHub Repository](https://github.com/your-repo/zlipy)
-- [Issue Tracker](https://github.com/your-repo/zlipy/issues) for reporting bugs
+- [GitHub Repository](https://github.com/NonExistentUsername/zlipy-client/zlipy)
+- [Issue Tracker](https://github.com/NonExistentUsername/zlipy-client/zlipy/issues) for reporting bugs
 - Links to relevant community forums or chat groups
