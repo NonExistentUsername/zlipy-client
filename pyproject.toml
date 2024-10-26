@@ -16,6 +16,7 @@ deeplake = "^3.9.23"
 gitignore-parser = "^0.1.11"
 langchain-community = "^0.3.0"
 aioconsole = "^0.8.0"
+rich = "^13.9.3"
 
 
 [tool.poetry.group.dev.dependencies]

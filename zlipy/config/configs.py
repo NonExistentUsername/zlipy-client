@@ -9,3 +9,7 @@ class DefaultConfig(IConfig):
     @property
     def api_key(self) -> str:
         return self._api_key
+
+    @property
+    def debug(self) -> bool:
+        return False

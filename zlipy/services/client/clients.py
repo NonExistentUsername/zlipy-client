@@ -2,13 +2,16 @@ import asyncio
 import json
 
 import aioconsole  # type: ignore
+import rich
 import websockets
+from rich.markdown import Markdown
 
 from zlipy.config.interfaces import IConfig
 from zlipy.domain.events import EventFactory, IEvent
 from zlipy.domain.tools import ITool
 from zlipy.services.api import IAPIClient
 from zlipy.services.client.interfaces import IClient
+from zlipy.services.console import aprint
 
 
 class Client(IClient):
@@ -28,8 +31,12 @@ class Client(IClient):
 
         return f"Tool {tool_name} not found" if tool is None else await tool.run(query)
 
-    def _pretty_print_message(self, message: str):
-        print(f"Message: {message}")
+    async def _pretty_print_message(self, message: str):
+        await aprint(Markdown(f"{message}"))
+
+    async def _debug_print(self, object):
+        if self.config.debug:
+            await aprint(object)
 
     async def _send_event(
         self, websocket: websockets.WebSocketClientProtocol, event: IEvent
@@ -61,21 +68,30 @@ class Client(IClient):
             )
 
         if event.name == "AgentMessageEvent":
-            self._pretty_print_message(event.data["message"])
+            await self._pretty_print_message(event.data["message"])
 
     def _stop_handle_events_condition(self, event: IEvent) -> bool:
         return event.name == "ReadyEvent"
 
     async def _handle_events(self, websocket: websockets.WebSocketClientProtocol):
         while True:
-            response = json.loads(await asyncio.wait_for(websocket.recv(), 300))
+            for _ in range(3):
+                try:
+                    response = json.loads(
+                        await asyncio.wait_for(websocket.recv(), timeout=300)
+                    )
+                    break
+                except Exception as e:
+                    await aioconsole.aprint(f"Error: {e}")
+                    continue
+            # response = json.loads(await websocket.recv())
 
-            print(f"< Received: {response}")
+            await self._debug_print(f"< Received: {response}")
 
             event = EventFactory.create(response)
 
             if self._stop_handle_events_condition(event):
-                print("< Ready event received")
+                await self._debug_print("< Ready event received")
                 break
 
             await self._handle_event(websocket, event)
@@ -89,15 +105,15 @@ class Client(IClient):
 
                     # Send a message to the server
                     message = await aioconsole.ainput("Enter a message: ")
+
                     if not message:
                         await websocket.close()
                         break
 
                     await websocket.send(message)
-                    print(f"> Sent: {message}")
+                    await self._debug_print(f"> Sent: {message}")
 
                 except Exception as e:
                     import traceback
 
-                    traceback.print_exc()
-                    print(f"An error occurred: {e}")
+                    await aioconsole.aprint(traceback.format_exc())
