@@ -17,7 +17,7 @@ class APIClient(IAPIClient):
         endpoint = f"{self.base}/tools/embeddings/?token={api_key}"
 
         async with httpx.AsyncClient() as client:
-            response = await client.post(endpoint, json={"texts": inputs})
+            response = await client.post(endpoint, json={"texts": inputs}, timeout=60)
             response.raise_for_status()
 
             return response.json()
