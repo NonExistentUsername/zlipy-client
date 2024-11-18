@@ -28,7 +28,32 @@ class AllowedExtensionsFilesFilter(IFilesFilter):
     def __init__(self) -> None:
         super().__init__()
 
-        self._allowed_extensions = {".py", ".txt", ".md", ".json"}
+        # fmt: off
+        self._allowed_extensions = {
+             ".py",   # Python files
+             ".txt",  # Text files
+             ".md",   # Markdown files
+             ".json", # JSON files
+             ".csv",  # Comma-separated values
+             ".xml",  # XML files
+             ".html", # HTML files
+             ".ini",  # INI configuration files
+             ".yaml", ".yml",  # YAML files
+             ".java", # Java source files
+             ".js",   # JavaScript files
+             ".c",    # C source files
+             ".cpp",  # C++ source files
+             ".rb",   # Ruby files
+             ".php",  # PHP files
+             ".go",   # Go source files
+             ".rs",   # Rust source files
+             ".kt",   # Kotlin source files
+             ".sh",   # Shell script files
+             ".sql"   # SQL script files
+             ".log"   # Log files
+             ".env"   # Environment files
+        }
+        # fmt: on
 
     def ignore(self, relative_path: str) -> bool:
         _, extenstion = os.path.splitext(relative_path)
