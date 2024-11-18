@@ -10,11 +10,21 @@ class RequestErrorFormatter:
         if exc_value.response is None:
             return f"{exc_value}"
 
-        if exc_value.response.status_code == 404:
+        status_code = exc_value.response.status_code
+        if status_code == 404:
             return "Cannot connect to the server. Please check your internet connection or try again later."
-
-        if exc_value.response.status_code == 401:
+        elif status_code == 401:
             return "Unauthorized. Please check your API key."
+        elif status_code == 500:
+            return "Server error. Please try again later."
+        elif status_code == 403:
+            return "Forbidden. You do not have permission to access this resource."
+        elif status_code == 408:
+            return "Request timeout. Please try again."
+        elif status_code == 429:
+            return "Too many requests. Please slow down and try again later."
+        elif status_code == 503:
+            return "Service unavailable. Please try again later."
 
         return f"{exc_value}"
 

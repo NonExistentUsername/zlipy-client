@@ -11,5 +11,4 @@ def run():
     if handler.handled_errors:
         return
 
-    with ErrorsHandler(prefix="Error during client run") as handler:
-        asyncio.run(client.run())
+    asyncio.run(client.run())
