@@ -80,8 +80,6 @@ class Client(IClient):
 
     async def _handle_events(self, websocket: websockets.WebSocketClientProtocol):
         while True:
-            await asyncio.sleep(0.3)
-
             for _ in range(3):
                 try:
                     response = json.loads(
@@ -91,7 +89,6 @@ class Client(IClient):
                 except Exception as e:
                     await aioconsole.aprint(f"Error: {e}")
                     continue
-            # response = json.loads(await websocket.recv())
 
             await self._debug_print(f"< Received: {response}")
 
