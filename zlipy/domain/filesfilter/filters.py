@@ -43,6 +43,8 @@ class AllowedExtensionsFilesFilter(IFilesFilter):
              ".js",   # JavaScript files
              ".c",    # C source files
              ".cpp",  # C++ source files
+             ".h",    # Header files
+             ".hpp",  # C++ header files
              ".rb",   # Ruby files
              ".php",  # PHP files
              ".go",   # Go source files
