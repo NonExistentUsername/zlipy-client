@@ -1,15 +1,15 @@
 import asyncio
 
-import rich
-
-from zlipy.services.client import ClientFactory, IClient
+from zlipy.services.client import ClientFactory
+from zlipy.services.errors_handler import ErrorsHandler
 
 
 def run():
-    try:
+    with ErrorsHandler(prefix="Error during client initialization") as handler:
         client = ClientFactory.create()
-    except Exception as e:
-        rich.print(f"[red]Error during client initialization: {e}[/red]")
+
+    if handler.handled_errors:
         return
 
-    asyncio.run(client.run())
+    with ErrorsHandler(prefix="Error during client run") as handler:
+        asyncio.run(client.run())
