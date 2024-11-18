@@ -12,6 +12,7 @@ from zlipy.domain.tools import ITool
 from zlipy.services.api import IAPIClient
 from zlipy.services.client.interfaces import IClient
 from zlipy.services.console import aprint
+from zlipy.services.console.loading_animation import LoadingAnimation
 
 
 class Client(IClient):
@@ -25,6 +26,7 @@ class Client(IClient):
         self.api_client = api_client
         self.config = config
         self.tools: dict[str, ITool] = tools or {}
+        self.loading_animation = LoadingAnimation()
 
     async def _call_tool(self, tool_name: str, query: str):
         tool = self.tools.get(tool_name)
@@ -73,8 +75,13 @@ class Client(IClient):
     def _stop_handle_events_condition(self, event: IEvent) -> bool:
         return event.name == "ReadyEvent"
 
+    def _stop_animation_events_condition(self, event: IEvent) -> bool:
+        return event.name in ["ReadyEvent", "AgentMessageEvent"]
+
     async def _handle_events(self, websocket: websockets.WebSocketClientProtocol):
         while True:
+            await asyncio.sleep(0.3)
+
             for _ in range(3):
                 try:
                     response = json.loads(
@@ -90,6 +97,10 @@ class Client(IClient):
 
             event = EventFactory.create(response)
 
+            if self._stop_animation_events_condition(event):
+                self.loading_animation.stop()
+                await asyncio.sleep(0.0005)  # Await for the animation to stop
+
             if self._stop_handle_events_condition(event):
                 await self._debug_print("< Ready event received")
                 break
@@ -100,10 +111,12 @@ class Client(IClient):
         async with self.api_client.connect(api_key=self.config.api_key) as websocket:
             while websocket.open:
                 try:
-                    # Read until ready event is received
-                    await self._handle_events(websocket)
+                    # Read until ready event is received with loading animation
+                    # await self._handle_events(websocket)
+                    await asyncio.gather(
+                        self.loading_animation.start(), self._handle_events(websocket)
+                    )
 
-                    # Send a message to the server
                     message = await aioconsole.ainput("Enter a message: ")
 
                     if not message:
@@ -111,6 +124,7 @@ class Client(IClient):
                         break
 
                     await websocket.send(message)
+
                     await self._debug_print(f"> Sent: {message}")
 
                 except Exception as e:
