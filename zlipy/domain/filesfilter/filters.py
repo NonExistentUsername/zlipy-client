@@ -1,5 +1,7 @@
 import os
-from typing import Any, Coroutine
+import re
+from re import Pattern
+from typing import List
 
 from gitignore_parser import parse_gitignore  # type: ignore
 
@@ -70,3 +72,46 @@ class MergeFilesFilter(IFilesFilter):
 
     def ignore(self, relative_path: str) -> bool:
         return any(filter.ignore(relative_path) for filter in self._filters)
+
+
+class IgnoredFilesFilter:
+    def __init__(self, patterns: List[str]):
+        """Initialize the filter with a list of .gitignore-like patterns."""
+        self.patterns = patterns
+        self.regex_patterns = self._convert_patterns_to_regex(patterns)
+
+    def _convert_patterns_to_regex(self, patterns: List[str]) -> List[Pattern]:
+        regex_patterns = []
+        for pattern in patterns:
+            if pattern.startswith("!"):
+                pattern = pattern[1:]  # Remove '!' for processing
+
+            # Escape special characters and convert to regex
+            pattern = re.escape(pattern)
+            pattern = pattern.replace(r"\*\*", ".*")  # Convert ** to .*
+            pattern = pattern.replace(r"\*", "[^/]*")  # Convert * to [^/]*
+            pattern = pattern.replace(r"/", r"\/")  # Escape /
+
+            regex_patterns.append(
+                re.compile(f"^{pattern}.*", re.UNICODE)
+            )  # Normal pattern for negation
+        return regex_patterns
+
+    def ignore(self, relative_path: str) -> bool:
+        """Check if the relative path matches any of the ignored patterns."""
+        is_ignored = any(regex.match(relative_path) for regex in self.regex_patterns)
+
+        # Check for negation patterns
+        for pattern in self.patterns:
+            if pattern.startswith("!"):
+                # Remove the leading '!' for the relative path
+                negated_pattern = pattern[1:]
+                negated_regex = (
+                    re.escape(negated_pattern)
+                    .replace(r"\*\*", ".*")
+                    .replace(r"\*", "[^/]*")
+                )
+                if re.match(f"^{negated_regex}.*", relative_path):
+                    is_ignored = False  # Re-include the file if it matches negation
+
+        return is_ignored
