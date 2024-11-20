@@ -11,3 +11,8 @@ class IConfig(abc.ABC):
     @abc.abstractmethod
     def debug(self) -> bool:
         pass
+
+    @property
+    @abc.abstractmethod
+    def disable_markdown_formatting(self) -> bool:
+        pass

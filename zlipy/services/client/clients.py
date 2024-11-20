@@ -34,7 +34,10 @@ class Client(IClient):
         return f"Tool {tool_name} not found" if tool is None else await tool.run(query)
 
     async def _pretty_print_message(self, message: str):
-        await aprint(Markdown(f"{message}"))
+        if not self.config.disable_markdown_formatting:
+            await aprint(Markdown(f"{message}"))
+        else:
+            await aprint(message)
 
     async def _debug_print(self, object):
         if self.config.debug:

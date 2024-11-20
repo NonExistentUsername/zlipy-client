@@ -7,7 +7,10 @@ from zlipy.config.interfaces import IConfig
 
 class ConfigFactory:
     @staticmethod
-    def create() -> IConfig:
+    def create(
+        debug: bool = False,
+        disable_markdown_formatting: bool = False,
+    ) -> IConfig:
         filename = DEFAULT_CONFIG_FILENAME
         config = configparser.ConfigParser()
         config.read(filename)
@@ -18,7 +21,11 @@ class ConfigFactory:
             )
 
         if api_key := config["settings"].get("api_key"):
-            return DefaultConfig(api_key)
+            return DefaultConfig(
+                api_key=api_key,
+                debug=debug,
+                disable_markdown_formatting=disable_markdown_formatting,
+            )
         else:
             raise ValueError(
                 "[bold red]api_key[/] not found in configuration file. Please, ensure you write it correctly inf your [bold red]{DEFAULT_CONFIG_FILENAME}[/] file"
