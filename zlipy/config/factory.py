@@ -21,10 +21,13 @@ class ConfigFactory:
             )
 
         if api_key := config["settings"].get("api_key"):
+            ignored_patterns = config["settings"].get("ignored_patterns", "").split(",")
+
             return DefaultConfig(
                 api_key=api_key,
                 debug=debug,
                 disable_markdown_formatting=disable_markdown_formatting,
+                ignored_patterns=ignored_patterns,
             )
         else:
             raise ValueError(

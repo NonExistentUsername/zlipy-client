@@ -11,11 +11,13 @@ from zlipy.domain.tools.interfaces import ITool
 from zlipy.services.embeddings import APIEmbeddings
 
 
-def load_docs() -> list:
+def load_docs(config: IConfig) -> list:
     root_dir = os.getcwd()
     docs = []
 
-    files_filter: IFilesFilter = FilesFilterFactory.create()
+    files_filter: IFilesFilter = FilesFilterFactory.create(
+        ignore_patterns=config.ignored_patterns
+    )
 
     for dirpath, _, filenames in os.walk(root_dir):
         for file in filenames:
@@ -28,7 +30,7 @@ def load_docs() -> list:
 
 
 def get_db_retriever(config: IConfig):
-    texts = load_docs()
+    texts = load_docs(config=config)
     db = DeepLake.from_documents(texts, APIEmbeddings(config=config), overwrite=True)
 
     retriever = db.as_retriever()

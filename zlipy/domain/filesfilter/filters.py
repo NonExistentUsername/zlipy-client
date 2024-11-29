@@ -74,7 +74,7 @@ class MergeFilesFilter(IFilesFilter):
         return any(filter.ignore(relative_path) for filter in self._filters)
 
 
-class IgnoredFilesFilter:
+class IgnoredFilesFilter(IFilesFilter):
     def __init__(self, patterns: List[str]):
         """Initialize the filter with a list of .gitignore-like patterns."""
         self.patterns = patterns

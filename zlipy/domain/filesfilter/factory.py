@@ -2,6 +2,7 @@ from zlipy.domain.filesfilter.constants import GITIGNORE_FILENAME, FilesFilterTy
 from zlipy.domain.filesfilter.filters import (
     AllowedExtensionsFilesFilter,
     GitIgnoreFilesFilter,
+    IgnoredFilesFilter,
     MergeFilesFilter,
 )
 from zlipy.domain.filesfilter.interfaces import IFilesFilter
@@ -11,11 +12,13 @@ class FilesFilterFactory:
     @staticmethod
     def create(
         files_filter_type: FilesFilterTypes = FilesFilterTypes.DEFAULT,
+        ignore_patterns: list[str] | None = None,
     ) -> IFilesFilter:
         if files_filter_type == FilesFilterTypes.DEFAULT:
             return MergeFilesFilter(
                 GitIgnoreFilesFilter(GITIGNORE_FILENAME),
                 AllowedExtensionsFilesFilter(),
+                IgnoredFilesFilter(ignore_patterns or []),
             )
 
         if files_filter_type == FilesFilterTypes.GITIGNORE:

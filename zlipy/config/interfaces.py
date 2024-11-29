@@ -16,3 +16,8 @@ class IConfig(abc.ABC):
     @abc.abstractmethod
     def disable_markdown_formatting(self) -> bool:
         pass
+
+    @property
+    @abc.abstractmethod
+    def ignored_patterns(self) -> list[str]:
+        pass
