@@ -30,8 +30,13 @@ class RequestErrorFormatter:
 
 
 class ErrorsHandler:
-    def __init__(self, prefix: str | None = None):
+    def __init__(
+        self,
+        prefix: str | None = None,
+        debug: bool = False,
+    ) -> None:
         self.prefix = prefix
+        self.debug = debug
 
         self.request_error_formatter = RequestErrorFormatter()
 
@@ -60,6 +65,9 @@ class ErrorsHandler:
         final_message = f"[red]{formatted_prefix}{formatted_value}[/red]"
 
         rich.print(final_message)
+
+        if self.debug:
+            raise exc_value
 
         self._handled_errors = True
 

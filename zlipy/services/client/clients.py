@@ -46,7 +46,12 @@ class Client(IClient):
     async def _send_event(
         self, websocket: websockets.WebSocketClientProtocol, event: IEvent
     ):
-        await websocket.send(json.dumps({"event": event.name, **event.data}))
+        prepared_data = json.dumps({"event": event.name, **event.data})
+
+        if self.config.debug:
+            await self._debug_print(f"> Sending: {prepared_data}")
+
+        await websocket.send(prepared_data)
 
     async def _handle_event(
         self, websocket: websockets.WebSocketClientProtocol, event: IEvent

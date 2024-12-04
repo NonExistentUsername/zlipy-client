@@ -18,7 +18,7 @@ class FilesFilterFactory:
             return MergeFilesFilter(
                 GitIgnoreFilesFilter(GITIGNORE_FILENAME),
                 AllowedExtensionsFilesFilter(),
-                IgnoredFilesFilter(ignore_patterns or []),
+                # IgnoredFilesFilter(ignore_patterns or []),
             )
 
         if files_filter_type == FilesFilterTypes.GITIGNORE:

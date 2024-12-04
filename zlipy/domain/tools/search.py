@@ -24,7 +24,10 @@ def load_docs(config: IConfig) -> list:
             if not files_filter.ignore(os.path.join(dirpath, file)):
                 with contextlib.suppress(Exception):
                     loader = TextLoader(os.path.join(dirpath, file), encoding="utf-8")
-                    docs.extend(loader.load_and_split())
+                    temp_docs: list = loader.load_and_split()
+                    for doc in temp_docs:
+                        doc.metadata["path"] = os.path.join(dirpath, file)
+                    docs.extend(temp_docs)
 
     return docs
 
@@ -35,8 +38,8 @@ def get_db_retriever(config: IConfig):
 
     retriever = db.as_retriever()
     retriever.search_kwargs["distance_metric"] = "cos"
-    retriever.search_kwargs["fetch_k"] = 3
-    retriever.search_kwargs["k"] = 3
+    retriever.search_kwargs["fetch_k"] = 6
+    retriever.search_kwargs["k"] = 6
 
     return db, retriever
 
@@ -45,7 +48,13 @@ class CodeBaseSearch(ITool):
     def __init__(self, config: IConfig) -> None:
         self.db, self.retriever = get_db_retriever(config=config)
 
-    async def run(self, input: str) -> list[str]:
+    async def run(self, input: str) -> list[dict]:
         docs = self.retriever.invoke(input)
 
-        return [doc.page_content for doc in docs]
+        return [
+            {
+                "path": item.metadata["path"],
+                "content": item.page_content,
+            }
+            for item in docs
+        ]
