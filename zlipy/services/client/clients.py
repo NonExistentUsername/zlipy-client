@@ -8,6 +8,13 @@ from rich.markdown import Markdown
 
 from zlipy.config.interfaces import IConfig
 from zlipy.domain.events import EventFactory, IEvent
+from zlipy.domain.filesfilter import (
+    FilesFilterFactory,
+    FilesFilterTypes,
+    IFilesFilter,
+    IProjectStructureLoader,
+    ProjectStructureLoaderFactory,
+)
 from zlipy.domain.tools import ITool
 from zlipy.services.api import IAPIClient
 from zlipy.services.client.interfaces import IClient
@@ -73,7 +80,16 @@ class Client(IClient):
             await self._send_event(
                 websocket,
                 EventFactory.create(
-                    {"event": "ConfigurationEvent", "tools": list(self.tools.keys())}
+                    {
+                        "event": "ConfigurationEvent",
+                        "tools": list(self.tools.keys()),
+                        "project_structure": ProjectStructureLoaderFactory.create(
+                            FilesFilterFactory.create(
+                                FilesFilterTypes.DEFAULT,
+                                self.config.ignored_patterns,
+                            )
+                        ).load(),
+                    }
                 ),
             )
 

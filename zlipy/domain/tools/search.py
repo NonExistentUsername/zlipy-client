@@ -23,6 +23,9 @@ def load_docs(config: IConfig) -> list:
         for file in filenames:
             if not files_filter.ignore(os.path.join(dirpath, file)):
                 with contextlib.suppress(Exception):
+                    if config.debug:
+                        print(f"Loading file: {os.path.join(dirpath, file)}")
+
                     loader = TextLoader(os.path.join(dirpath, file), encoding="utf-8")
                     temp_docs: list = loader.load_and_split()
                     for doc in temp_docs:

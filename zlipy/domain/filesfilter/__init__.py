@@ -1,4 +1,4 @@
 from .constants import *
-from .factory import FilesFilterFactory
+from .factory import *
 from .filters import *
-from .interfaces import IFilesFilter
+from .interfaces import *
