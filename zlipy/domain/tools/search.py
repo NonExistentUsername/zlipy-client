@@ -29,7 +29,9 @@ def load_docs(config: IConfig) -> list:
                     loader = TextLoader(os.path.join(dirpath, file), encoding="utf-8")
                     temp_docs: list = loader.load_and_split()
                     for doc in temp_docs:
-                        doc.metadata["path"] = os.path.join(dirpath, file)
+                        doc.metadata["path"] = os.path.join(dirpath, file).replace(
+                            root_dir, ""
+                        )
                     docs.extend(temp_docs)
 
     return docs
