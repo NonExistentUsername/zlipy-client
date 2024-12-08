@@ -9,5 +9,5 @@ class IFilesFilter(abc.ABC):
 
 class IProjectStructureLoader(abc.ABC):
     @abc.abstractmethod
-    def load(self) -> dict[str, list[str | dict]]:
+    def load(self) -> list[str | dict]:
         pass

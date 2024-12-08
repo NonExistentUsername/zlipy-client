@@ -22,5 +22,5 @@ class DefaultProjectStructureLoader(IProjectStructureLoader):
 
         return result
 
-    def load(self) -> dict[str, list[str | dict]]:
-        return {"root": self._load(os.getcwd())}
+    def load(self) -> list[str | dict]:
+        return self._load(os.getcwd())
