@@ -64,17 +64,42 @@ class Client(IClient):
         self, websocket: websockets.WebSocketClientProtocol, event: IEvent
     ):
         if event.name == "ToolCallEvent":
-            await self._send_event(
-                websocket,
-                EventFactory.create(
-                    {
-                        "event": "SearchToolCallResponseEvent",
-                        "documents": await self._call_tool(
-                            event.data["tool"], event.data["query"]
+            if event.data["tool"] not in self.tools:
+                await self._send_event(
+                    websocket,
+                    EventFactory.create(
+                        {
+                            "event": "ToolCallResponseEvent",
+                            "error": f"Tool {event.data['tool']} not found",
+                        }
+                    ),
+                )
+                return
+            else:
+                if event.data["tool"] == "search":
+                    await self._send_event(
+                        websocket,
+                        EventFactory.create(
+                            {
+                                "event": "SearchToolCallResponseEvent",
+                                "documents": await self._call_tool(
+                                    event.data["tool"], event.data["query"]
+                                ),
+                            }
                         ),
-                    }
-                ),
-            )
+                    )
+                elif event.data["tool"] == "load":
+                    await self._send_event(
+                        websocket,
+                        EventFactory.create(
+                            {
+                                "event": "LoadFileToolCallResponseEvent",
+                                "content": await self._call_tool(
+                                    event.data["tool"], event.data["query"]
+                                ),
+                            }
+                        ),
+                    )
 
         if event.name == "WaitingForConfigurationEvent":
             await self._send_event(
