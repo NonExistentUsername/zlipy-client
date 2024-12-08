@@ -21,7 +21,11 @@ class ConfigFactory:
             )
 
         if api_key := config["settings"].get("api_key"):
-            ignored_patterns = config["settings"].get("ignored_patterns", "").split(",")
+            ignored_patterns = []
+
+            for pattern in config["settings"].get("ignored_patterns", "").split(","):
+                if pattern_stripped := pattern.strip():
+                    ignored_patterns.append(pattern_stripped)
 
             return DefaultConfig(
                 api_key=api_key,
