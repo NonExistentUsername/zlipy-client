@@ -5,7 +5,8 @@ from zlipy.domain.filesfilter.filters import (
     IgnoredFilesFilter,
     MergeFilesFilter,
 )
-from zlipy.domain.filesfilter.interfaces import IFilesFilter
+from zlipy.domain.filesfilter.interfaces import IFilesFilter, IProjectStructureLoader
+from zlipy.domain.filesfilter.loaders import DefaultProjectStructureLoader
 
 
 class FilesFilterFactory:
@@ -28,3 +29,9 @@ class FilesFilterFactory:
             return AllowedExtensionsFilesFilter()
 
         raise ValueError(f"Unknown files filter type: {files_filter_type}")
+
+
+class ProjectStructureLoaderFactory:
+    @staticmethod
+    def create(files_filter: IFilesFilter) -> IProjectStructureLoader:
+        return DefaultProjectStructureLoader(files_filter)

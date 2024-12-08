@@ -51,3 +51,11 @@ def test_edge_case_non_matching(ignored_files_filter: IgnoredFilesFilter):
 def test_edge_case_empty_patterns():
     empty_filter = IgnoredFilesFilter([])
     assert empty_filter.ignore("anyfile.py") is False  # Should not ignore anything
+    assert (
+        empty_filter.ignore("temp/tempfile.tmp") is False
+    )  # Should not ignore anything
+    assert empty_filter.ignore("docs/file.txt") is False  # Should not ignore anything
+    assert (
+        empty_filter.ignore("images/picture.png") is False
+    )  # Should not ignore anything
+    assert empty_filter.ignore("important.log") is False  # Should not ignore anything

@@ -8,6 +8,13 @@ from rich.markdown import Markdown
 
 from zlipy.config.interfaces import IConfig
 from zlipy.domain.events import EventFactory, IEvent
+from zlipy.domain.filesfilter import (
+    FilesFilterFactory,
+    FilesFilterTypes,
+    IFilesFilter,
+    IProjectStructureLoader,
+    ProjectStructureLoaderFactory,
+)
 from zlipy.domain.tools import ITool
 from zlipy.services.api import IAPIClient
 from zlipy.services.client.interfaces import IClient
@@ -46,29 +53,68 @@ class Client(IClient):
     async def _send_event(
         self, websocket: websockets.WebSocketClientProtocol, event: IEvent
     ):
-        await websocket.send(json.dumps({"event": event.name, **event.data}))
+        prepared_data = json.dumps({"event": event.name, **event.data})
+
+        if self.config.debug:
+            await self._debug_print(f"> Sending: {prepared_data}")
+
+        await websocket.send(prepared_data)
 
     async def _handle_event(
         self, websocket: websockets.WebSocketClientProtocol, event: IEvent
     ):
         if event.name == "ToolCallEvent":
-            await self._send_event(
-                websocket,
-                EventFactory.create(
-                    {
-                        "event": "SearchToolCallResponseEvent",
-                        "documents": await self._call_tool(
-                            event.data["tool"], event.data["query"]
+            if event.data["tool"] not in self.tools:
+                await self._send_event(
+                    websocket,
+                    EventFactory.create(
+                        {
+                            "event": "ToolCallResponseEvent",
+                            "error": f"Tool {event.data['tool']} not found",
+                        }
+                    ),
+                )
+                return
+            else:
+                if event.data["tool"] == "search":
+                    await self._send_event(
+                        websocket,
+                        EventFactory.create(
+                            {
+                                "event": "SearchToolCallResponseEvent",
+                                "documents": await self._call_tool(
+                                    event.data["tool"], event.data["query"]
+                                ),
+                            }
                         ),
-                    }
-                ),
-            )
+                    )
+                elif event.data["tool"] == "load":
+                    await self._send_event(
+                        websocket,
+                        EventFactory.create(
+                            {
+                                "event": "LoadFileToolCallResponseEvent",
+                                "content": await self._call_tool(
+                                    event.data["tool"], event.data["query"]
+                                ),
+                            }
+                        ),
+                    )
 
         if event.name == "WaitingForConfigurationEvent":
             await self._send_event(
                 websocket,
                 EventFactory.create(
-                    {"event": "ConfigurationEvent", "tools": list(self.tools.keys())}
+                    {
+                        "event": "ConfigurationEvent",
+                        "tools": list(self.tools.keys()),
+                        "project_structure": ProjectStructureLoaderFactory.create(
+                            FilesFilterFactory.create(
+                                FilesFilterTypes.DEFAULT,
+                                self.config.ignored_patterns,
+                            )
+                        ).load(),
+                    }
                 ),
             )
 
