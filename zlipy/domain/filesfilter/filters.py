@@ -53,9 +53,9 @@ class AllowedExtensionsFilesFilter(IFilesFilter):
              ".rs",   # Rust source files
              ".kt",   # Kotlin source files
              ".sh",   # Shell script files
-             ".sql"   # SQL script files
-             ".log"   # Log files
-             ".env"   # Environment files
+             ".sql",  # SQL script files
+             ".log",  # Log files
+             ".env",  # Environment files
         }
         # fmt: on
 
