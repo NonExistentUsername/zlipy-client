@@ -74,5 +74,5 @@ A typical use case for `zlipy` might involve a user initializing their configura
 ## Additional Resources
 For further assistance, consider the following resources:
 - [GitHub Repository](https://github.com/NonExistentUsername/zlipy-client/)
-- [Issue Tracker](https://github.com/NonExistentUsername/zlipy-clie/nt/issues) for reporting bugs
+- [Issue Tracker](https://github.com/NonExistentUsername/zlipy-client/issues) for reporting bugs
 - Links to relevant community forums or chat groups
