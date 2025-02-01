@@ -11,9 +11,9 @@ class LoadingAnimation:
     async def run(self):
         console = Console()
         progress = Progress(console=console, transient=True)
-        task = progress.add_task("[cyan]Loading...", total=100)
+        task = progress.add_task("[cyan]Conducting analysis...", total=100)
         with Progress(transient=True) as progress:
-            task = progress.add_task("Loading...", total=None)
+            task = progress.add_task("Conducting analysis...", total=None)
             while not self._stop_event.is_set():
                 progress.update(task, advance=0)
                 await asyncio.sleep(0.0001)
