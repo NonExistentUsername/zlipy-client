@@ -16,10 +16,22 @@ class FilesFilterFactory:
         ignore_patterns: list[str] | None = None,
     ) -> IFilesFilter:
         if files_filter_type == FilesFilterTypes.DEFAULT:
+            if not ignore_patterns:
+                ignore_patterns = [
+                    "deeplake/",
+                    "zlipy.ini",
+                    "*.log",
+                    "*.sql",
+                    "*.json",
+                    "*.csv",
+                    "*.xml",
+                    "*.txt",
+                ]
+
             return MergeFilesFilter(
                 GitIgnoreFilesFilter(GITIGNORE_FILENAME),
                 AllowedExtensionsFilesFilter(),
-                IgnoredFilesFilter(ignore_patterns or []),
+                IgnoredFilesFilter(patterns=ignore_patterns),
             )
 
         if files_filter_type == FilesFilterTypes.GITIGNORE:
