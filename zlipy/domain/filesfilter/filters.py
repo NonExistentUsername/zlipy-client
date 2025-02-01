@@ -1,9 +1,10 @@
 import os
 import re
 from re import Pattern
-from typing import List
+from typing import Callable, List
 
 from gitignore_parser import parse_gitignore  # type: ignore
+from gitignore_parser import IgnoreRule, handle_negation, rule_from_pattern
 
 from zlipy.domain.filesfilter.constants import GITIGNORE_FILENAME, FilesFilterTypes
 from zlipy.domain.filesfilter.interfaces import IFilesFilter
@@ -39,6 +40,7 @@ class AllowedExtensionsFilesFilter(IFilesFilter):
              ".csv",  # Comma-separated values
              ".xml",  # XML files
              ".html", # HTML files
+             ".css",  # CSS files
              ".ini",  # INI configuration files
              ".yaml", ".yml",  # YAML files
              ".java", # Java source files
@@ -78,40 +80,24 @@ class IgnoredFilesFilter(IFilesFilter):
     def __init__(self, patterns: List[str]):
         """Initialize the filter with a list of .gitignore-like patterns."""
         self.patterns = patterns
-        self.regex_patterns = self._convert_patterns_to_regex(patterns)
+        # self.rules: List[IgnoreRule] = self._convert_patterns_to_regex(patterns)
+        self.matches = self._convert_patterns_to_match_func(patterns)
 
-    def _convert_patterns_to_regex(self, patterns: List[str]) -> List[Pattern]:
-        regex_patterns = []
+    def _convert_patterns_to_match_func(
+        self, patterns: List[str]
+    ) -> Callable[[str], bool]:
+        rules = []
         for pattern in patterns:
-            if pattern.startswith("!"):
-                pattern = pattern[1:]  # Remove '!' for processing
+            rule = rule_from_pattern(pattern, base_path=".")
+            rules.append(rule)
 
-            # Escape special characters and convert to regex
-            pattern = re.escape(pattern)
-            pattern = pattern.replace(r"\*\*", ".*")  # Convert ** to .*
-            pattern = pattern.replace(r"\*", "[^/]*")  # Convert * to [^/]*
-            pattern = pattern.replace(r"/", r"\/")  # Escape /
-
-            regex_patterns.append(
-                re.compile(f"^{pattern}.*", re.UNICODE)
-            )  # Normal pattern for negation
-        return regex_patterns
+        if not any(r.negation for r in rules):
+            return lambda file_path: any(r.match(file_path) for r in rules)
+        else:
+            # We have negation rules. We can't use a simple "any" to evaluate them.
+            # Later rules override earlier rules.
+            return lambda file_path: handle_negation(file_path, rules)
 
     def ignore(self, relative_path: str) -> bool:
         """Check if the relative path matches any of the ignored patterns."""
-        is_ignored = any(regex.match(relative_path) for regex in self.regex_patterns)
-
-        # Check for negation patterns
-        for pattern in self.patterns:
-            if pattern.startswith("!"):
-                # Remove the leading '!' for the relative path
-                negated_pattern = pattern[1:]
-                negated_regex = (
-                    re.escape(negated_pattern)
-                    .replace(r"\*\*", ".*")
-                    .replace(r"\*", "[^/]*")
-                )
-                if re.match(f"^{negated_regex}.*", relative_path):
-                    is_ignored = False  # Re-include the file if it matches negation
-
-        return is_ignored
+        return self.matches(relative_path)
