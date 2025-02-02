@@ -24,4 +24,4 @@ class APIClient(IAPIClient):
 
     def connect(self, api_key: str) -> websockets.connect:
         endpoint = f"{self.ws_base}/ws/?token={api_key}"
-        return websockets.connect(endpoint, ping_timeout=60, ping_interval=10)
+        return websockets.connect(endpoint, ping_timeout=500, ping_interval=10)
