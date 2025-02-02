@@ -16,7 +16,7 @@ from zlipy.domain.filesfilter import (
 from zlipy.domain.tools import ITool
 from zlipy.services.api import IAPIClient
 from zlipy.services.client.interfaces import IClient
-from zlipy.services.console import aprint
+from zlipy.services.console import aprint, asimple_print
 from zlipy.services.console.loading_animation import LoadingAnimation
 
 
@@ -42,7 +42,7 @@ class Client(IClient):
         if not self.config.disable_markdown_formatting:
             await aprint(Markdown(f"{message}"))
         else:
-            await aprint(message)
+            await asimple_print(message)
 
     async def _debug_print(self, object):
         if self.config.debug:

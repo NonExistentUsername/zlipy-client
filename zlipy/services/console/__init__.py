@@ -1,1 +1,1 @@
-from .print import aprint
+from .print import aprint, asimple_print
