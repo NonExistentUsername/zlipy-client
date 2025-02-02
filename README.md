@@ -40,6 +40,10 @@ Once the configuration is initialized, you can start a chat by running:
 ```bash
 zlipy chat
 ```
+or
+```bash
+zlipy
+```
 
 This command initiates the chat interface. Users can expect to interact with the chat service directly through the command line. Currently, there are no additional flags or options for
 this command, but future updates may introduce more functionality.
@@ -60,6 +64,37 @@ To use the API, you will need an API key. The API key is required to authenticat
 - For best practices, avoid hardcoding your API key in your source code. Instead, consider using environment variables or a secrets management tool to keep your API key
 secure.
 - Do not share your API key publicly or expose it in client-side code.
+
+## Command options
+
+The chat command supports additional options to tailor the behavior of the application. Two key options are:
+
+-dmf (--disable-markdown-formatting)
+- Description: When this flag is set, the application disables the markdown formatting in the console output.
+- Usage: Use this option if you prefer plain text output without markdown styles, which can be useful if you encounter formatting issues in certain terminals or if you simply prefer unformatted text.
+
+-dd (--deep-dive)
+- Description: This flag enables Deep Dive Mode, an advanced analysis mode that provides more in-depth processing.
+- Usage: Enable this option when you need a more thorough investigation or analysis from the chat command. Deep Dive Mode activates additional debugging and analysis routines, which might provide extended information useful for advanced users or developers.
+- WARNING: This feature is experimental and may not be fully supported in all scenarios or lead to errors in certain cases. Use with caution.
+
+## Configuration File
+
+The configuration file, `zlipy.ini`, is a key component of the CLI that stores user settings and preferences. This file is created during the initialization process and can be customized.
+
+The ignored_patterns feature allows to provide a customizable list of patterns that define which files or directories should be excluded from processing. These patterns are similar to those used in .gitignore files, supporting wildcards (e.g., "*.log" to ignore all log files) as well as negation rules (using a "!" prefix to specify exceptions).
+
+Example of a configuration file with ignored patterns:
+
+```ini
+[settings]
+# Your API key for accessing the zlipy API.
+api_key = YOUR_API_KEY
+
+# Comma-separated list of patterns to define ignored files and directories.
+# Patterns follow .gitignore-like syntax.
+ignored_patterns = .git/, node_modules/, *.log, *.tmp, temp/*, !important.log, docs/**, images/*.png, !images/keep.png, temp/**/tempfile.tmp
+```
 
 ## Nuances of Usage
 - **Troubleshooting**: If the chat fails to start, ensure that your configuration file is correctly set up and that you have an active internet connection. Check for error messages that
