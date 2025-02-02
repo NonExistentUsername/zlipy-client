@@ -158,6 +158,7 @@ class Client(IClient):
 
                     if not message:
                         await websocket.close()
+                        await self._pretty_print_message("Connection closed")
                         break
 
                     await websocket.send(message)
