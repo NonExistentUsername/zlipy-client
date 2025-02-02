@@ -6,14 +6,14 @@ class DefaultConfig(IConfig):
         self,
         api_key: str,
         debug: bool = False,
-        boost: bool = False,
+        deep_dive: bool = False,
         disable_markdown_formatting: bool = False,
         ignored_patterns: list[str] | None = None,
     ) -> None:
         super().__init__()
         self._api_key = api_key
         self._debug = debug
-        self._boost = boost
+        self._deep_dive = deep_dive
         self._disable_markdown_formatting = disable_markdown_formatting
         self._ignored_patterns = ignored_patterns or []
 
@@ -34,5 +34,5 @@ class DefaultConfig(IConfig):
         return self._ignored_patterns
 
     @property
-    def boost(self) -> bool:
-        return self._boost
+    def deep_dive(self) -> bool:
+        return self._deep_dive
