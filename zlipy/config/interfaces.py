@@ -24,5 +24,5 @@ class IConfig(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def boost(self) -> bool:
+    def deep_dive(self) -> bool:
         pass

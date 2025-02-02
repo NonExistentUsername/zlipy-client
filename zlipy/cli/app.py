@@ -9,9 +9,17 @@ from zlipy.config import init_config
 from zlipy.config.factory import ConfigFactory
 
 
-@click.group()
-def main():
-    pass
+@click.group(invoke_without_command=True)
+@click.pass_context
+def main(ctx):
+    if not ctx.invoked_subcommand:
+        run(
+            config=ConfigFactory.create(
+                debug=False,
+                boost=False,
+                disable_markdown_formatting=False,
+            )
+        )
 
 
 @main.command()
@@ -27,6 +35,7 @@ def init():
     "-dmf",
     is_flag=True,
     help="Disable markdown formatting in the console.",
+    default=False,
 )
 @click.option(
     "--debug",
@@ -36,24 +45,24 @@ def init():
     default=False,
 )
 @click.option(
-    "--boost",
-    "-b",
+    "--deep-dive",
+    "-dd",
     is_flag=True,
-    help="Enable boost mode (deeper search and analysis, may be slower).",
+    help="Enable deep dive mode (advanced analysis).",
     default=False,
 )
-def chat(disable_markdown_formatting: bool, debug: bool, boost: bool):
+def chat(disable_markdown_formatting: bool, debug: bool, deep_dive: bool):
     """Start a chat."""
     run(
         config=ConfigFactory.create(
             debug=debug,
-            boost=boost,
+            deep_dive=deep_dive,
             disable_markdown_formatting=disable_markdown_formatting,
         )
     )
 
 
-cli = click.CommandCollection(sources=[main])
+cli = main
 
 
 if __name__ == "__main__":

@@ -112,7 +112,7 @@ class Client(IClient):
                                 self.config.ignored_patterns,
                             )
                         ).load(),
-                        "boost": self.config.boost,
+                        "boost": self.config.deep_dive,
                     }
                 ),
             )
