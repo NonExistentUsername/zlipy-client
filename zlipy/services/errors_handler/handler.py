@@ -1,6 +1,8 @@
 import rich
 from httpx import HTTPStatusError
 
+from zlipy.services.errors_handler.utils import pretty_time
+
 
 class RequestErrorFormatter:
     def format(self, exc_value) -> str:
@@ -15,16 +17,19 @@ class RequestErrorFormatter:
             return "Cannot connect to the server. Please check your internet connection or try again later."
         elif status_code == 401:
             return "Unauthorized. Please check your API key."
-        elif status_code == 500:
-            return "Server error. Please try again later."
         elif status_code == 403:
             return "Forbidden. You do not have permission to access this resource."
         elif status_code == 408:
             return "Request timeout. Please try again."
         elif status_code == 429:
-            return "Too many requests. Please slow down and try again later."
+            try:
+                return f"Too many requests. Please slow down and try again in {pretty_time(int(exc_value.response.headers['Retry-After']))}."
+            except (KeyError, ValueError):
+                return "Too many requests. Please slow down and try again later."
         elif status_code == 503:
             return "Service unavailable. Please try again later."
+        elif status_code >= 500 and status_code < 600:
+            return "Server error. Please try again later."
 
         return f"{exc_value}"
 

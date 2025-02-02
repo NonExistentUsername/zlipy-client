@@ -21,3 +21,8 @@ class IConfig(abc.ABC):
     @abc.abstractmethod
     def ignored_patterns(self) -> list[str]:
         pass
+
+    @property
+    @abc.abstractmethod
+    def boost(self) -> bool:
+        pass

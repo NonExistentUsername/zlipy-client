@@ -11,8 +11,6 @@ from zlipy.domain.events import EventFactory, IEvent
 from zlipy.domain.filesfilter import (
     FilesFilterFactory,
     FilesFilterTypes,
-    IFilesFilter,
-    IProjectStructureLoader,
     ProjectStructureLoaderFactory,
 )
 from zlipy.domain.tools import ITool
@@ -114,6 +112,7 @@ class Client(IClient):
                                 self.config.ignored_patterns,
                             )
                         ).load(),
+                        "boost": self.config.boost,
                     }
                 ),
             )
@@ -129,15 +128,7 @@ class Client(IClient):
 
     async def _handle_events(self, websocket: websockets.WebSocketClientProtocol):
         while True:
-            for _ in range(3):
-                try:
-                    response = json.loads(
-                        await asyncio.wait_for(websocket.recv(), timeout=300)
-                    )
-                    break
-                except Exception as e:
-                    await aioconsole.aprint(f"Error: {e}")
-                    continue
+            response = json.loads(await asyncio.wait_for(websocket.recv(), timeout=300))
 
             await self._debug_print(f"< Received: {response}")
 
@@ -174,6 +165,10 @@ class Client(IClient):
                     await self._debug_print(f"> Sent: {message}")
 
                 except Exception as e:
+                    if isinstance(e, websockets.exceptions.ConnectionClosed):
+                        await self._pretty_print_message("Connection closed")
+                        break
+
                     import traceback
 
                     await aioconsole.aprint(traceback.format_exc())
