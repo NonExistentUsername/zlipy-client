@@ -11,8 +11,6 @@ from zlipy.domain.events import EventFactory, IEvent
 from zlipy.domain.filesfilter import (
     FilesFilterFactory,
     FilesFilterTypes,
-    IFilesFilter,
-    IProjectStructureLoader,
     ProjectStructureLoaderFactory,
 )
 from zlipy.domain.tools import ITool
@@ -114,6 +112,7 @@ class Client(IClient):
                                 self.config.ignored_patterns,
                             )
                         ).load(),
+                        "boost": self.config.boost,
                     }
                 ),
             )

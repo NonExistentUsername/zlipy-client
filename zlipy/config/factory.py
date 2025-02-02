@@ -9,6 +9,7 @@ class ConfigFactory:
     @staticmethod
     def create(
         debug: bool = False,
+        boost: bool = False,
         disable_markdown_formatting: bool = False,
     ) -> IConfig:
         filename = DEFAULT_CONFIG_FILENAME
@@ -30,6 +31,7 @@ class ConfigFactory:
             return DefaultConfig(
                 api_key=api_key,
                 debug=debug,
+                boost=boost,
                 disable_markdown_formatting=disable_markdown_formatting,
                 ignored_patterns=ignored_patterns,
             )

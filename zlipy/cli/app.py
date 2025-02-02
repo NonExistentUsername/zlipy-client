@@ -33,12 +33,21 @@ def init():
     "-d",
     is_flag=True,
     help="Enable debug mode (more verbose output).",
+    default=False,
 )
-def chat(disable_markdown_formatting: bool, debug: bool):
+@click.option(
+    "--boost",
+    "-b",
+    is_flag=True,
+    help="Enable boost mode (deeper search and analysis, may be slower).",
+    default=False,
+)
+def chat(disable_markdown_formatting: bool, debug: bool, boost: bool):
     """Start a chat."""
     run(
         config=ConfigFactory.create(
             debug=debug,
+            boost=boost,
             disable_markdown_formatting=disable_markdown_formatting,
         )
     )

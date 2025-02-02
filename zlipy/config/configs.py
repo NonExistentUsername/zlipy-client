@@ -6,12 +6,14 @@ class DefaultConfig(IConfig):
         self,
         api_key: str,
         debug: bool = False,
+        boost: bool = False,
         disable_markdown_formatting: bool = False,
         ignored_patterns: list[str] | None = None,
     ) -> None:
         super().__init__()
         self._api_key = api_key
         self._debug = debug
+        self._boost = boost
         self._disable_markdown_formatting = disable_markdown_formatting
         self._ignored_patterns = ignored_patterns or []
 
@@ -30,3 +32,7 @@ class DefaultConfig(IConfig):
     @property
     def ignored_patterns(self) -> list[str]:
         return self._ignored_patterns
+
+    @property
+    def boost(self) -> bool:
+        return self._boost
