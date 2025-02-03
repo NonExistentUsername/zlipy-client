@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zlipy"
-version = "0.2.6"
+version = "0.2.7"
 description = "AI-powered chat assistant designed to simplify deep project investigations and streamline coding tasks. Whether you're a developer debugging code, a researcher exploring complex systems, or a student learning to program"
 authors = ["Dmytro Maior <mayor4090@gmail.com>"]
 readme = "README.md"
