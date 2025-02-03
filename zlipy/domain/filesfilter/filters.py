@@ -58,6 +58,14 @@ class AllowedExtensionsFilesFilter(IFilesFilter):
              ".sql",  # SQL script files
              ".log",  # Log files
              ".env",  # Environment files
+             ".ts",   # TypeScript files
+             ".jsx",  # JSX files
+             ".htmlx",# HTMLX files
+             ".tsx",  # TypeScript JSX files
+             ".vue",  # Vue.js files
+             ".scss", # SASS files
+             ".sass", # SASS files
+             ".tf",   # Terraform files
         }
         # fmt: on
 
